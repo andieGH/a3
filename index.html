@@ -2,7 +2,10 @@
 <html>
 	<head>
 		<title> Socket.IO chat</title>
-		<link rel="stylesheet" type="text/css" href="a3.css"/>
+		<link rel='stylesheet' type='text/css' href='a3.css'/>
+
+		<link href="https://fonts.googleapis.com/css?family=Handlee" rel="stylesheet" type='text/css'>
+
 	</head>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -17,13 +20,14 @@
 			});
 			socket.on('chat message', function(msg){
 				$('#messages').append($('<li>').text(msg));
+				window.scrollTo(0, document.body.scrollHeight);
 			});
 		});
 	</script> 
 	<body>
 		<ul id="messages"></ul>
 		<form action="">
-			<input id="m" autocomplete="="off" /><button>Send</button>
+			<input id="m" autocomplete="off" /><button>Send</button>
 		</form>
 	</body>
 </html>

@@ -1,42 +1,50 @@
-body, html {
-    font: 13px Helvetica, Arial; 
-    font-color: pink;
+* { 
+	margin: 0; 
+	padding: 0; 
+	box-sizing: border-box; 
 }
 
-button {
-	background-color: pink;
+
+body { 
+	font-size: 13px;
+	font-family: 'Handlee', cursive;
 }
 
 form { 
-	background: #000; 
+	background: pink; 
 	padding: 3px; 
 	position: fixed; 
 	bottom: 0; 
-	width: 100%; }
+	width: 100%; 
 }
 
 form input { 
-	border: 0;
+	border: 0; 
 	padding: 10px; 
 	width: 90%; 
 	margin-right: .5%; 
 }
 
 form button { 
+	font-family: 'Handlee', cursive;
+	font-size: 20px;
+
 	width: 9%; 
-	background: rgb(130, 224, 255); 
+	background: purple; 
 	border: none; 
 	padding: 10px; 
 }
 
-#messages {
+#messages { 
 	list-style-type: none; 
 	margin: 0; 
 	padding: 0; 
 }
+
 #messages li { 
 	padding: 5px 10px; 
 }
+
 #messages li:nth-child(odd) { 
 	background: #eee; 
 }
