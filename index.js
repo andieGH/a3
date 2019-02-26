@@ -4,6 +4,8 @@ var io = require('socket.io')(http);
 
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
+	res.setHeader('content-type', 'text/css');	
+	res.sendFile(__dirname + '/a3.css');
 });
 
 io.on('connection', function(socket){
