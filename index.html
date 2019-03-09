@@ -7,28 +7,105 @@
 		<link href="https://fonts.googleapis.com/css?family=Handlee" rel="stylesheet" type='text/css'>
 
 	</head>
+	<!--<script type="text/javascript" src="index.js"></script> !-->
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 	<script>
 		$(function () {
 			var socket = io();
+			var messageAuthor = "";
+			var timestamp= "";
+			var nickColour = "";
+
 			$('form').submit(function(e) {
 				e.preventDefault(); // prevents page reloading
 				socket.emit('chat message', $('#m').val());
 				$('#m').val('');
 				return false;
 			});
-			socket.on('chat message', function(msg){
-				$('#messages').append($('<li>').text(msg));
-				window.scrollTo(0, document.body.scrollHeight);
+
+			socket.on('list_of_users', function(data){
+				$( "#userP" ).empty();
+				for (var i=0; i<data.users.length; i++) {
+					$('#userP').append($('<p>').text(data.users[i]));
+				}
 			});
+
+			socket.on('send_Timestamp', function(timeS){
+				var ts = new Date(timeS);
+				var hour = ts.getHours();
+				var minutes = ts.getMinutes();
+
+				if ((minutes * 1) < 10) {
+  					minutes = "0" + minutes;
+  				}
+  				timestamp = hour + ":" + minutes;
+			}) 
+
+			socket.on('current_User', function(data){
+				$( "#showUsername" ).empty();
+				$('#showUsername').append($('<p>').text("You are " + data));
+				messageAuthor = data;
+
+			})
+
+			socket.on('change colour', function(c) {
+				nickColour = c;
+				nickColour = "#"+ nickColour;
+			})
+
+			socket.on('chat message', function(msg){
+				window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight);
+				var tmp = msg.split(" ");
+				var username = tmp[1].substr(0, tmp[1].length-1);
+				var tmp = msg.split(":");
+				var message = tmp[1];
+				if (username === messageAuthor) {
+					$('#messages').append($('<messages>').css('font-weight','bolder').text(timestamp)).append($('<messages>').text(" ")).append($('<messages>').css('color', nickColour).css('font-weight', 'bolder').text(username)).append($('<messages>').text(":")).append($('<messages>').css('font-weight', 'bolder').text(message)).append("<br />");
+				}
+				else {
+					$('#messages').append($('<messages>').text(timestamp)).append($('<messages>').text(" ")).append($('<messages>').text(username)).append($('<messages>').text(":")).append($('<messages>').text(message)).append("<br />");				
+				}
+			});
+
+			socket.on('error message', function(err){
+				$( "#showError" ).empty();
+				$('#showError').append($('<p>').text(err));
+
+			});
+
+			socket.on('clear error', function(err){
+				if (err === true) {}
+				else {
+					$( "#showError" ).empty();
+				}
+			});
+
+			socket.on('disconnect', function(data){})
+
 		});
 	</script> 
 	<body>
-		<ul id="messages"></ul>
-		<form action="">
-			<input id="m" autocomplete="off" /><button>Send</button>
-		</form>
+		<div class="outerContainer">
+			<div class="userContainer">
+				<h1>Active <strong>Users:</strong> </h1>
+				<p id="userP"></p>
+			</div>
+			<div class="userSpot">
+				<p id="showUsername"></p>
+			</div>
+			<div class="errorSpot">
+				<p id="showError"></p>
+			</div>
+			<div class="chatContainer">
+				<ul id="messages"></ul>
+			</div>
+			<div class="formContainer">
+				<form action="">
+					<input id="m" autocomplete="off" /><button>Send</button>
+				</form>
+			</div>
+		</div>
 	</body>
 </html>
 
