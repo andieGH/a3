@@ -1,96 +1,151 @@
 
 body, html {
-    height: 100%;
-}
-
-#messages { 
-	padding: 10px;
-	list-style-type: none; 
-	margin: 0; 
-	padding: 0; 
-	font-size: 20px;
-}
-
-#messages li { 
-	padding: 5px 10px; 
-	display: inline-block;
-}
-#messages li:nth-child(odd) { 
-	display: inline-block;
-}
-
-.userSpot {
-	background: green;
-	height: 5%;
-	width: 60%;
-	line-height: 1;
-	padding: 10px;
-	margin: 10px;
-	font-size: 20px;
-}
-.errorSpot {
-	font-size: 20px;
-	height: 10%;
-	width: 60%;
-	padding: 10px;
-	margin: 10px;
-}
-.chatContainer {
-	background-color: pink;
-	margin: 10px;
-	width: 60%;
-	height: 80%;
-	float: left;
+	min-width: 300;
+	background-color: #bfbdbe;
 	overflow: scroll;
 }
 
+.wrapper {
+	display: flex;
+}
+.container1 {
+	max-width: 1000px;
+	overflow: wrap;
+	flex: 2 1 auto;
+	background: #bfbdbe;
+ 	padding: 0.5rem;
+ }
+.container2 {
+	min-width: 250px;
+	overflow: wrap;
+	flex: 1;
+	width: 30%;
+	background: #bfbdbe;
+ 	padding: 0.5rem;
+ }
+.errorSpot {
+	background: #bfbdbe;
+	height: 46px;
+	overflow: hidden;
+	padding-left: 10px;
+	padding-top: 10px;
+	width: 100%;
+}
+
+#showError {
+	color: red;
+	font-family: 'Quicksand', sans-serif;
+	font-size: 18px;
+}
+.emptySpot {
+	background: #bfbdbe;
+	font-size: 20px;
+	height: 30px;
+	width: 100%;
+}
+.userSpot {
+	font-family: 'Handlee', sans-serif;
+	font-weight: bold;
+	font-size: 30px;
+	background: #bfbdbe;
+	height: 30px;
+	width: 100%;
+	padding-bottom: 45px;
+	text-decoration: underline wavy #b5fcf5;
+
+}
+.activeSpot {
+	font-family: 'Handlee', sans-serif;
+	font-weight: bold;
+	font-size: 30px;
+	background: #bfbdbe;
+	height: 30px;
+	width: 100%;
+	padding-bottom: 45px;
+	text-decoration: underline wavy #b5fcf5;
+}
+.chatContainer {
+	border: solid #F1BFDC 6px;
+	background: #efa7d7;
+	width: 100%;
+	height: 650px;
+
+	overflow-y:auto;
+	overflow-x:hidden;
+	position:relative;
+	display:flex;
+	flex-direction: column-reverse;
+}
+
+#messages {
+	font-family: 'Quicksand', sans-serif;
+	font-size: 25px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
+
+
 .userContainer {
-	background-color: yellow;
-	width: 33%;
-	height: 80%;
-	float: right;
-	padding: 10px;
-}
-
-.outerContainer{
+	font-family: 'Quicksand', sans-serif;
+	font-size: 25px;
+	border: solid #F1BFDC 6px;
+	background-color: #efa7d7;
 	width: 100%;
-	height: 100%;
+	height: 650px;
+	overflow: scroll;
+	padding-left: 20px;
+	overflow-y:auto;
+	overflow-x:hidden;
+	position:relative;
+	display:flex;
+	flex-direction: column-reverse;
 }
 
-body { 
-	font-size: 13px;
-	font-family: 'Handlee', cursive;
-}
-
-.formContainer {
-	position: fixed; 
-	bottom: 0; 
+form {
 	width: 100%;
-}
-form { 
-	background: pink; 
-	padding: 3px; 
-	padding-left: 7px;
-	padding-right: 7px;
-	width: 100%; 
+    height: 70px;
+    background-color: #a09fa0;
+    padding: 15px;
+    padding-bottom: 
 }
 
 form input { 
-	border: 0; 
-	padding: 10px; 
-	width: 90%; 
-	margin-right: .5%; 
+	height: 40px;
+	width: 85%;
 }
 
 form button { 
-	box-sizing: border-box; 
 	font-family: 'Handlee', cursive;
-	font-size: 20px;
-	width: 8%; 
-	background: purple; 
-	border: none; 
-	padding: 6px; 
-	margin: 3px;
-	margin-left: 9px;
+	font-size: 25px;
+	background: #CCDAC7; 
+	font-weight: bold;
+	line-height: 32px;
+	height: 40px;
+	border: dotted white 4px;
+	vertical-align: middle;
+	text-align: center;
+	width: 10%;
+	margin-left: 20px;
 }
 
+@media screen and (max-width: 700px) {
+	form button {
+		font-size: 18px;
+	}
+
+	.userSpot {
+		font-size: 22px;
+	}
+	.activeSpot {
+		font-size: 22px;
+	}
+
+	.userContainer {
+		font-size: 18px;
+	}
+	.messages {
+		font-size: 18px;
+	}
+}

@@ -3,11 +3,10 @@
 	<head>
 		<title> Socket.IO chat</title>
 		<link rel='stylesheet' type='text/css' href='a3.css'/>
-
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 		<link href="https://fonts.googleapis.com/css?family=Handlee" rel="stylesheet" type='text/css'>
+		<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
 
-	</head>
-	<!--<script type="text/javascript" src="index.js"></script> !-->
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 	<script>
@@ -31,6 +30,35 @@
 				}
 			});
 
+			socket.on('print Memory', function (data) {
+				for (var i=0; i<data.memory.length; i++) {
+					var tmp = data.memory[i].split(" ");
+
+					var ts = Number(tmp[0]);
+					
+					var otherColour = "#" + tmp[1];
+					var username = tmp[2].substring(0, tmp[2].length - 1);
+					tmp = data.memory[i].split(":");
+					var message = tmp[1];
+
+					var time = new Date(ts);
+					var hour = time.getHours();
+					var minutes = time.getMinutes();
+
+					if ((minutes * 1) < 10) {
+  						minutes = "0" + minutes;
+  					}
+  					timestamp = hour + ":" + minutes;
+  					
+  					if (username === messageAuthor) {
+					$('#messages').append($('<messages>').css('font-weight','bolder').text(timestamp)).append($('<messages>').text(" ")).append($('<messages>').css('color', nickColour).css('font-weight', 'bolder').text(username)).append($('<messages>').text(":")).append($('<messages>').css('font-weight', 'bolder').text(message)).append("<br />");
+					}
+					else {
+						$('#messages').append($('<messages>').css('font-weight', '100').text(timestamp)).append($('<messages>').css('font-weight', '100').text(" ")).append($('<messages>').css('color', otherColour).css('font-weight', '100').text(username)).append($('<messages>').css('font-weight', '100').text(":")).append($('<messages>').css('font-weight', '100').text(message)).append("<br />");
+					}
+				}
+			});
+
 			socket.on('send_Timestamp', function(timeS){
 				var ts = new Date(timeS);
 				var hour = ts.getHours();
@@ -44,7 +72,7 @@
 
 			socket.on('current_User', function(data){
 				$( "#showUsername" ).empty();
-				$('#showUsername').append($('<p>').text("You are " + data));
+				$('#showUsername').append($('<p>').text("Your Username is " + data));
 				messageAuthor = data;
 
 			})
@@ -55,16 +83,19 @@
 			})
 
 			socket.on('chat message', function(msg){
-				window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight);
+				var chatContainer = $('.chatContainer');
+
+    			chatContainer.scrollTop = chatContainer.scrollHeight;
 				var tmp = msg.split(" ");
-				var username = tmp[1].substr(0, tmp[1].length-1);
+				var otherColour = "#" + tmp[1];
+				var username = tmp[2].substring(0, tmp[2].length - 1);
 				var tmp = msg.split(":");
 				var message = tmp[1];
 				if (username === messageAuthor) {
 					$('#messages').append($('<messages>').css('font-weight','bolder').text(timestamp)).append($('<messages>').text(" ")).append($('<messages>').css('color', nickColour).css('font-weight', 'bolder').text(username)).append($('<messages>').text(":")).append($('<messages>').css('font-weight', 'bolder').text(message)).append("<br />");
 				}
 				else {
-					$('#messages').append($('<messages>').text(timestamp)).append($('<messages>').text(" ")).append($('<messages>').text(username)).append($('<messages>').text(":")).append($('<messages>').text(message)).append("<br />");				
+					$('#messages').append($('<messages>').css('font-weight', '100').text(timestamp)).append($('<messages>').css('font-weight', '100').text(" ")).append($('<messages>').css('color', otherColour).css('font-weight', '100').text(username)).append($('<messages>').css('font-weight', '100').text(":")).append($('<messages>').css('font-weight', '100').text(message)).append("<br />");
 				}
 			});
 
@@ -86,26 +117,34 @@
 		});
 	</script> 
 	<body>
-		<div class="outerContainer">
-			<div class="userContainer">
-				<h1>Active <strong>Users:</strong> </h1>
-				<p id="userP"></p>
+		<section class="wrapper">
+			<div class="container1">
+				<div class="errorSpot">
+					<p id="showError"></p>
+				</div>
+				<div class="userSpot">
+					<p id="showUsername"></p>
+				</div>
+				<div class="chatContainer">
+					<ul id="messages"></ul>
+				</div>
 			</div>
-			<div class="userSpot">
-				<p id="showUsername"></p>
+			<div class="container2">
+				<div class="emptySpot">
+					<p></p>
+				</div>
+				<div class="activeSpot">
+					<p id="showActive">Active Users</p>
+				</div>
+				<div class="userContainer">
+					<p id="userP"></p>
+				</div>
 			</div>
-			<div class="errorSpot">
-				<p id="showError"></p>
-			</div>
-			<div class="chatContainer">
-				<ul id="messages"></ul>
-			</div>
-			<div class="formContainer">
-				<form action="">
-					<input id="m" autocomplete="off" /><button>Send</button>
-				</form>
-			</div>
-		</div>
+		</section>
+		<form action="">
+				<input id="m" autocomplete="off" />
+				<button>Send</button>
+		</form>
 	</body>
 </html>
 

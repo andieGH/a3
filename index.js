@@ -4,6 +4,9 @@ var io = require('socket.io')(http);
 var users = new Array(0);
 var duplicate = true;
 var flag = false;
+var colours = new Array(0);
+var memory = new Array(0);
+var time;
 
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
@@ -14,35 +17,9 @@ app.get('/a3.css', function(req,res) {
 	res.sendFile(__dirname + '/a3.css');
 });
 
-app.get('/', function(req, res) {
-	  res.cookie("My First Cookie", "Yeah!");
-	  res.send("Created a cookie!");
-});
-
-/*
-var duplicate = true;
-var cookieParser = require('cookie-parser')
-app.use(cookieParser())
-
-
-
-app.get('/list', function(req, res) {
-	res.send(req.cookies);
-});
-
-app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/index.html');
-	 if (req.cookies["visits"]) {
-	    res.cookie("visits", req.cookies["visits"] - 0 + 1);
-	    res.send("Welcome to the website! You have been here " + req.cookies["visits"] + " times before");
-	  } else {
-	    	res.cookie("visits", 0);
-	    	res.send("Welcome to the website! This is your first time here!");
-		}
-});
-*/
 
 io.on('connection', function(socket){
+
 	console.log(users);
 	console.log("A user connected. Socket id: " + socket.id);
 	// Assigns a random username. Up to 1000 possible.
@@ -52,6 +29,7 @@ io.on('connection', function(socket){
 	}
 	duplicate = true;
 	users.push(username);
+	colours.push("000000")
 
 	// Send the list of users.
 	socket.emit('list_of_users', {users: users});
@@ -61,9 +39,11 @@ io.on('connection', function(socket){
 	socket.emit('current_User', socket.name);
 	console.log("socket.name = " + socket.name);
 
+	socket.emit('print Memory', {memory: memory});
+
 	socket.on('chat message', function(msg){
 		var d = new Date();
- 		var time = d.getTime();
+ 		time = d.getTime();
 		// Send the timestamp unformatted
 		io.emit('send_Timestamp', time);
 
@@ -76,33 +56,41 @@ io.on('connection', function(socket){
 			try {
 				var res = msg.split("<");
 				var name = res[1].split(">");
-				n = socket.name;
 				
 				for (var i=0; i<users.length; i++) {
 					if (users[i] === name[0]) {
-						var errorMess = ("ERROR - This nickname is already being used, please choose a different nickname.");
+						var errorMess = ("ERROR: This nickname is already being used, please choose a different nickname.");
 						socket.emit('error message', errorMess);
 						flag = true;
 					}
 				}
 
-				if (flag === false) {
+				if (name[0] === "") {
+					errorMess = ("ERROR: Invalid nickname.");
+					socket.emit('error message', errorMess);
+					flag = true;
+				}
+
+				else if (flag === false) {
 					console.log("Succesful nickname change");
 
 					var index = users.indexOf(socket.name);
 					n = socket.name;
 					users.splice(index,1);
+					var tmp = colours[index];
+					colours.splice(index,1);
 
 					socket.name= name[0];
 					username = socket.name;
 					users.push(username);
+					colours.push(tmp);
 					socket.emit('current_User', socket.name);
 					io.emit('list_of_users', {users: users});
 				}
 			}
 			catch (error) {
 				flag = true;
-				errorMess = ("ERROR: to change nickname please use format: /nick <new nickname>");
+				errorMess = ("ERROR: To change nickname please use format: /nick <new nickname>");
 				console.log(errorMess);
 				socket.emit('error message', errorMess);
 				flag = true;
@@ -114,21 +102,27 @@ io.on('connection', function(socket){
 				c = c[1];
 
 				if (c === undefined) {
-					var errorMess = ("ERROR: to change nickname display color please user format: /nickColor RRGGBB");
+					var errorMess = ("ERROR: To change nickname display color please user format: /nickColor RRGGBB");
 					socket.emit('error message', errorMess);
 					flag = true;
 				}
 				if (c.length === 6 ) {
+					console.log("Successful colour change");
 					socket.emit('change colour', c);
+					for (var i=0; i<users.length; i++) {
+						if (socket.name === users[i]) {
+							colours[i] = c;
+						}
+					}
 				}
 				else {
-					errorMess = ("ERROR: to change nickname display color please user format: /nickColor RRGGBB");
+					errorMess = ("ERROR: To change nickname display color please user format: /nickColor RRGGBB");
 					socket.emit('error message', errorMess);
 					flag = true;
 				}
 			}
 			catch (error) {
-				errorMess = ("ERROR: to change nickname display color please user format: /nickColor RRGGBB");
+				errorMess = ("ERROR: To change nickname display color please user format: /nickColor RRGGBB");
 				socket.emit('error message', errorMess);
 				flag = true;
 			}
@@ -136,8 +130,20 @@ io.on('connection', function(socket){
 	});
 	
 	socket.on('chat message', function(msg) {
-		io.emit('chat message', " " + socket.name + ": " + msg);
+		for (var i=0; i<users.length; i++) {
+			if (socket.name === users[i]) {
+				var colour = colours[i];
+			} 
+		}
+
+		io.emit('chat message', " " + colour + " " + socket.name + ": " + msg);
 		socket.emit('clear error', flag);
+
+
+		if (memory.length > 200) {
+			console.log("Memory full");
+		}
+		memory.push(time + " " + colour + " " + socket.name + ": " + msg);
 		flag = false;
 	});
 
@@ -145,9 +151,10 @@ io.on('connection', function(socket){
 		var index = users.indexOf(socket.name);
 		n = socket.name;
 		users.splice(index,1);
+		colours.splice(index, 1);
+		console.log(n + ' disconnected');
 		
 		io.emit('disconnect', users);
-		console.log(n + ' disconnected');
 		console.log("Updated user list: [" + users + "]");
 		io.emit('list_of_users', {users: users});
 
