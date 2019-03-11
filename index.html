@@ -15,6 +15,10 @@
 			var messageAuthor = "";
 			var timestamp= "";
 			var nickColour = "";
+			
+			var getCookie = function (name) {
+				var value = "; " + document.cookie;
+			};
 
 			$('form').submit(function(e) {
 				e.preventDefault(); // prevents page reloading
@@ -74,7 +78,7 @@
 				$( "#showUsername" ).empty();
 				$('#showUsername').append($('<p>').text("Your Username is " + data));
 				messageAuthor = data;
-
+				document.cookie = data;
 			})
 
 			socket.on('change colour', function(c) {

@@ -8,15 +8,23 @@ var colours = new Array(0);
 var memory = new Array(0);
 var time;
 
+
+var cookieParser = require('cookie-parser')
+app.use(cookieParser())
+
+app.get('/list', function(req, res) {
+	  res.send(req.cookies);
+	});
+
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
 });
+
 
 app.get('/a3.css', function(req,res) {
 	res.setHeader('content-type', 'text/css');
 	res.sendFile(__dirname + '/a3.css');
 });
-
 
 io.on('connection', function(socket){
 
@@ -28,8 +36,9 @@ io.on('connection', function(socket){
 		duplicate = users.includes(username);
 	}
 	duplicate = true;
+
 	users.push(username);
-	colours.push("000000")
+	colours.push("000000");
 
 	// Send the list of users.
 	socket.emit('list_of_users', {users: users});
@@ -52,13 +61,13 @@ io.on('connection', function(socket){
 		var changeColour = msg.substring(0, 10);
 		var changeColour2 = msg.substring(0,11);
 
-		if (changeNick === "/nick" && changeColour2 !== "/nickColour" && changeColour != "/nickColor"){
+		if (changeNick.toUpperCase() === "/nick".toUpperCase() && changeColour2.toUpperCase() !== "/nickColour".toUpperCase() && changeColour.toUpperCase() != "/nickColor".toUpperCase()){
 			try {
 				var res = msg.split("<");
 				var name = res[1].split(">");
 				
 				for (var i=0; i<users.length; i++) {
-					if (users[i] === name[0]) {
+					if (users[i].toUpperCase() === name[0].toUpperCase()) {
 						var errorMess = ("ERROR: This nickname is already being used, please choose a different nickname.");
 						socket.emit('error message', errorMess);
 						flag = true;
@@ -96,7 +105,7 @@ io.on('connection', function(socket){
 				flag = true;
 			}
 		}
-		if (changeColour === "/nickColor" || changeColour2 === "/nickColour") {
+		if (changeColour.toUpperCase() === "/nickColor".toUpperCase() || changeColour2.toUpperCase() === "/nickColour".toUpperCase()) {
 			try {
 				var c = msg.split(" ");
 				c = c[1];

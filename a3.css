@@ -26,16 +26,17 @@ body, html {
 .errorSpot {
 	background: #bfbdbe;
 	height: 46px;
-	overflow: hidden;
 	padding-left: 10px;
 	padding-top: 10px;
 	width: 100%;
+
 }
 
 #showError {
+	overflow: scroll;
 	color: red;
 	font-family: 'Quicksand', sans-serif;
-	font-size: 18px;
+	font-size: 1rem;
 }
 .emptySpot {
 	background: #bfbdbe;
